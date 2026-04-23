@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal do Colaborador</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111318;
+    --border: #1e2229;
+    --accent: #e8c547;
+    --text: #f0f2f5;
+    --muted: #6b7280;
+    --danger: #ef4444;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+
+  /* LOGIN */
+  #login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+  #login-screen::before { content: ''; position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(232,197,71,0.08) 0%, transparent 70%); top: -100px; left: -100px; pointer-events: none; }
+  #login-screen::after { content: ''; position: absolute; width: 400px; height: 400px; background: radial-gradient(circle, rgba(59,130,246,0.06) 0%, transparent 70%); bottom: -50px; right: -50px; pointer-events: none; }
+  .login-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 52px 48px; width: 420px; position: relative; z-index: 1; animation: fadeUp 0.6s ease both; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+  .login-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 36px; }
+  .login-logo-icon { width: 40px; height: 40px; background: var(--accent); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+  .login-logo-icon svg { width: 22px; height: 22px; }
+  .login-logo-text { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.2; }
+  .login-logo-text span { display: block; font-size: 11px; font-weight: 400; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; }
+  .login-title { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; margin-bottom: 6px; }
+  .login-subtitle { font-size: 14px; color: var(--muted); margin-bottom: 36px; }
+  .field { margin-bottom: 18px; }
+  .field label { display: block; font-size: 12px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 8px; }
+  .field input { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; outline: none; transition: border-color 0.2s; }
+  .field input:focus { border-color: var(--accent); }
+  .field input::placeholder { color: var(--muted); }
+  #error-msg { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: var(--danger); margin-bottom: 18px; display: none; }
+  .btn-login { width: 100%; background: var(--accent); color: #0a0c10; border: none; border-radius: 10px; padding: 14px; font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; transition: opacity 0.2s, transform 0.1s; margin-top: 8px; }
+  .btn-login:hover { opacity: 0.88; }
+  .btn-login:active { transform: scale(0.98); }
+
+  /* PORTAL */
+  #portal-screen { display: none; flex-direction: column; min-height: 100vh; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 0 28px; height: 60px; background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+  .topbar-left { display: flex; align-items: center; gap: 12px; }
+  .topbar-logo { width: 30px; height: 30px; background: var(--accent); border-radius: 7px; display: flex; align-items: center; justify-content: center; }
+  .topbar-logo svg { width: 16px; height: 16px; }
+  .topbar-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; }
+  .topbar-right { display: flex; align-items: center; gap: 16px; }
+  .user-badge { display: flex; align-items: center; gap: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; font-size: 13px; color: var(--muted); }
+  .user-badge strong { color: var(--text); font-weight: 500; }
+  .btn-logout { background: transparent; border: 1px solid var(--border); border-radius: 8px; padding: 6px 14px; color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+  .btn-logout:hover { border-color: var(--danger); color: var(--danger); }
+  .nav-tabs { display: flex; align-items: center; gap: 4px; padding: 12px 28px; background: var(--surface); border-bottom: 1px solid var(--border); overflow-x: auto; }
+  .nav-tab { background: transparent; border: 1px solid transparent; border-radius: 8px; padding: 8px 18px; color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+  .nav-tab:hover { color: var(--text); background: var(--bg); }
+  .nav-tab.active { background: var(--accent); color: #0a0c10; font-weight: 600; border-color: transparent; }
+  .report-area { flex: 1; display: flex; flex-direction: column; padding: 20px 28px; gap: 14px; }
+  .report-header { display: flex; align-items: center; justify-content: space-between; }
+  .report-title { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; }
+  .report-meta { font-size: 12px; color: var(--muted); }
+  .iframe-wrapper { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; min-height: calc(100vh - 200px); position: relative; }
+  .iframe-loader { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: var(--surface); z-index: 2; transition: opacity 0.4s; }
+  .loader-ring { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loader-text { font-size: 13px; color: var(--muted); }
+  #report-iframe { width: 100%; height: 100%; border: none; display: block; min-height: calc(100vh - 200px); }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#0a0c10" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+          <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+        </svg>
+      </div>
+      <div class="login-logo-text">Portal BI<span>Área do Colaborador</span></div>
+    </div>
+    <div class="login-title">Bem-vindo</div>
+    <div class="login-subtitle">Acesse com suas credenciais</div>
+    <div class="field">
+      <label>Usuário</label>
+      <input type="text" id="input-user" placeholder="Digite seu usuário" autocomplete="off" />
+    </div>
+    <div class="field">
+      <label>Senha</label>
+      <input type="password" id="input-pass" placeholder="••••••••" />
+    </div>
+    <div id="error-msg">Usuário ou senha incorretos.</div>
+    <button class="btn-login" onclick="doLogin()">Entrar</button>
+  </div>
+</div>
+
+<!-- PORTAL -->
+<div id="portal-screen">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#0a0c10" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+          <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+        </svg>
+      </div>
+      <span class="topbar-title">Portal BI</span>
+    </div>
+    <div class="topbar-right">
+      <div class="user-badge">👤 <strong id="display-user"></strong></div>
+      <button class="btn-logout" onclick="doLogout()">Sair</button>
+    </div>
+  </div>
+  <div class="nav-tabs" id="nav-tabs"></div>
+  <div class="report-area">
+    <div class="report-header">
+      <div class="report-title" id="report-title">—</div>
+      <div class="report-meta" id="report-meta"></div>
+    </div>
+    <div class="iframe-wrapper">
+      <div class="iframe-loader" id="iframe-loader">
+        <div class="loader-ring"></div>
+        <div class="loader-text">Carregando relatório...</div>
+      </div>
+      <iframe id="report-iframe" allowfullscreen></iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+  const BASE = "https://app.powerbi.com/view?r=eyJrIjoiNzAxOTYxZjYtNDA4Ny00MDAzLWFmNDQtMjYxZmJjZmE4MDhhIiwidCI6ImY2NTA0ZGQ5LWY5NzYtNGFmMS1iYzljLWRmZWU2ZDI0YmI4MSJ9";
+
+  const USERS = {
+    "01. Gerencial": { senha: "8092", paginas: ["overview", "fluxo"] }
+  };
+
+  const PAGINAS = {
+    overview: { label: "Overview",        pageName: "e591ba71b6a27e50985a" },
+    fluxo:    { label: "Fluxo de Caixa",  pageName: "1e90ce82a6687a713181" }
+  };
+
+  let currentUser = null;
+
+  function doLogin() {
+    const u = document.getElementById("input-user").value.trim();
+    const p = document.getElementById("input-pass").value.trim();
+    const err = document.getElementById("error-msg");
+    if (USERS[u] && USERS[u].senha === p) {
+      err.style.display = "none";
+      currentUser = u;
+      iniciarPortal();
+    } else {
+      err.style.display = "block";
+    }
+  }
+
+  document.addEventListener("keydown", e => {
+    if (e.key === "Enter") doLogin();
+  });
+
+  function iniciarPortal() {
+    document.getElementById("login-screen").style.display = "none";
+    const portal = document.getElementById("portal-screen");
+    portal.style.display = "flex";
+    document.getElementById("display-user").textContent = currentUser;
+
+    const tabs = document.getElementById("nav-tabs");
+    tabs.innerHTML = "";
+    const paginas = USERS[currentUser].paginas;
+    paginas.forEach((id, i) => {
+      const pg = PAGINAS[id];
+      const btn = document.createElement("button");
+      btn.className = "nav-tab" + (i === 0 ? " active" : "");
+      btn.textContent = pg.label;
+      btn.dataset.id = id;
+      btn.onclick = () => abrirPagina(id);
+      tabs.appendChild(btn);
+    });
+    abrirPagina(paginas[0]);
+  }
+
+  function abrirPagina(id) {
+    const pg = PAGINAS[id];
+    const url = BASE + "&pageName=" + pg.pageName;
+    document.querySelectorAll(".nav-tab").forEach(b => b.classList.toggle("active", b.dataset.id === id));
+    document.getElementById("report-title").textContent = pg.label;
+    document.getElementById("report-meta").textContent = "Power BI · Link público";
+    const loader = document.getElementById("iframe-loader");
+    const iframe = document.getElementById("report-iframe");
+    loader.style.opacity = "1";
+    loader.style.display = "flex";
+    iframe.src = url;
+    iframe.onload = () => {
+      setTimeout(() => {
+        loader.style.opacity = "0";
+        setTimeout(() => loader.style.display = "none", 400);
+      }, 1200);
+    };
+  }
+
+  function doLogout() {
+    currentUser = null;
+    document.getElementById("report-iframe").src = "";
+    document.getElementById("portal-screen").style.display = "none";
+    document.getElementById("login-screen").style.display = "flex";
+    document.getElementById("input-user").value = "";
+    document.getElementById("input-pass").value = "";
+  }
+</script>
+</body>
+</html>
