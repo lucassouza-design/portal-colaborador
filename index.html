@@ -257,11 +257,12 @@ const PAGINAS = {
   remessa_import:  { label:"Remessa e Importação",   pageName:"7efb55fb0b74660c5412" },
   movimentacoes:   { label:"Movimentações",          pageName:"efe631164e618e301743" },
   gestao_estoque:  { label:"Gestão Estoque",         pageName:"b8352818a927ef20d73e" },
+  agendor_vendas:  { label:"Agendor Vendas",         pageName:"d631de2813a857177b6b" },
 };
 
 // Usuários padrão
 const USERS_DEFAULT = {
-  "marcelo.cozac":    { senha:"8092",  paginas:["overview","vendas_view","meta_realizado","fluxo_caixa","pendentes","custos_margem","compras_odoo","venda_pecas","curva_abc","faturamento","transacoes_clara","resumo_ano"] },
+  "marcelo.cozac":    { senha:"8092",  paginas:["overview","vendas_view","meta_realizado","fluxo_caixa","pendentes","custos_margem","compras_odoo","venda_pecas","curva_abc","faturamento","transacoes_clara","resumo_ano","agendor_vendas"] },
   "lucymara.garcia":  { senha:"1801",  paginas:["fluxo_caixa","contas_pagar"] },
   "vinicius.molina":  { senha:"7989",  paginas:["fluxo_caixa","contas_receber","gestao_vista"] },
   "eliete.rodrigues": { senha:"9067",  paginas:["faturamento","remessa_import","gestao_vista"] },
@@ -275,8 +276,8 @@ const USERS_DEFAULT = {
   "patricia.galvao":  { senha:"6300",  paginas:["vendas","analise_posv","pendentes","tabela_pedidos","agendor_posv","mapa","venda_pecas","gestao_vista"] },
   "carolina.couto":   { senha:"7552",  paginas:["vendas","analise_posv","pendentes","tabela_pedidos","agendor_posv","mapa","venda_pecas","gestao_vista"] },
   "creiciane.soares": { senha:"4712",  paginas:["transacoes_clara"] },
-  "renato.betarelli": { senha:"2229",  paginas:["overview_st","tarefas_st","transacoes_clara"] },
-  "arthur.coutinho":  { senha:"6742",  paginas:["overview_st","tarefas_st","transacoes_clara"] },
+  "renato.betarelli": { senha:"2229",  paginas:["overview_st","tarefas_st","transacoes_clara","pendentes"] },
+  "arthur.coutinho":  { senha:"6742",  paginas:["overview_st","tarefas_st","transacoes_clara","pendentes"] },
 };
 
 // Carrega usuários do localStorage ou usa padrão
