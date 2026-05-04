@@ -298,6 +298,15 @@ const USERS_DEFAULT = {
   "patricia.galvao":  { senha:"6300",  paginas:["vendas","analise_posv","pendentes","tabela_pedidos","agendor_posv","mapa","venda_pecas","gestao_vista"] },
   "carolina.couto":   { senha:"7552",  paginas:["vendas","analise_posv","pendentes","tabela_pedidos","agendor_posv","mapa","venda_pecas","gestao_vista"] },
   "creiciane.soares": { senha:"4712",  paginas:["transacoes_clara"] },
+  "arthur.coutinho":   { senha:"6742",  paginas:["overview_st","tarefas_st","transacoes_clara","pendentes"] },
+  "alejando.reyes":    { senha:"2546",  paginas:["vendas_view","meta_realizado","agendor_vendas"] },
+  "daniel.gonzalez":   { senha:"8019",  paginas:["vendas_view","meta_realizado","agendor_vendas"] },
+  "deivisson.ferreira":{ senha:"2758",  paginas:["vendas_view","meta_realizado","agendor_vendas"] },
+  "mateus.kullmann":   { senha:"5539",  paginas:["vendas_view","meta_realizado","agendor_vendas"] },
+  "mauro.vargas":      { senha:"5511",  paginas:["vendas_view","meta_realizado","agendor_vendas"] },
+  "rafael.batissaldo": { senha:"3407",  paginas:["vendas_view","meta_realizado","agendor_vendas"] },
+  "reinaldo.jesus":    { senha:"5180",  paginas:["vendas_view","meta_realizado","agendor_vendas"] },
+  "flavia.julio":      { senha:"4405",  paginas:["vendas_view","meta_realizado","agendor_vendas"] },
   "renato.betarelli": { senha:"2229",  paginas:["overview_st","tarefas_st","transacoes_clara","pendentes"] },
   "arthur.coutinho":  { senha:"6742",  paginas:["overview_st","tarefas_st","transacoes_clara","pendentes"] },
 };
@@ -531,7 +540,9 @@ function salvarUsuario() {
   users[u]={senha:s, paginas:checks};
   saveUsers(users);
   fecharModal();
-  renderAdminTable();
+  // Refresh whichever admin table is visible
+  if (document.getElementById("users-tbody")) renderAdminTable();
+  if (document.getElementById("users-tbody-inline")) renderInlineAdmin();
 }
 
 function deletarUsuario(u) {
@@ -539,7 +550,8 @@ function deletarUsuario(u) {
   const users=getUsers();
   delete users[u];
   saveUsers(users);
-  renderAdminTable();
+  if (document.getElementById("users-tbody")) renderAdminTable();
+  if (document.getElementById("users-tbody-inline")) renderInlineAdmin();
 }
 
 carregarSessao();
