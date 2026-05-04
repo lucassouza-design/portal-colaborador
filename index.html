@@ -137,6 +137,14 @@
   gtag('js', new Date());
   gtag('config', 'G-J61J4685WD');
 </script>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J61J4685WD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-J61J4685WD');
+</script>
 </head>
 <body>
 
@@ -178,6 +186,10 @@
     </div>
     <div class="topbar-right">
       <div class="user-badge">👤 <strong id="display-user"></strong></div>
+      <div id="admin-mode-btns" style="display:none;gap:6px;align-items:center;flex-direction:row">
+        <button id="btn-dashboards" onclick="irParaDashboards()" style="background:#fff;color:var(--navy);border:none;border-radius:7px;padding:5px 14px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s">📊 Dashboards</button>
+        <button id="btn-admin-portal" onclick="irParaAdmin()" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:7px;padding:5px 14px;color:rgba(255,255,255,0.8);font-family:'Poppins',sans-serif;font-size:13px;cursor:pointer;transition:all 0.2s">⚙️ Admin</button>
+      </div>
       <button class="btn-logout" onclick="doLogout()">Sair</button>
     </div>
   </div>
@@ -203,7 +215,7 @@
       <span class="admin-title">⚙️ Painel Administrativo</span>
     </div>
     <div class="topbar-right">
-      <button class="btn-admin-logout" onclick="adminLogout()">Sair do Admin</button>
+      <button class="btn-admin-logout" onclick="adminLogout()">← Voltar ao Portal</button>
     </div>
   </div>
   <div class="admin-body">
@@ -271,6 +283,7 @@ const PAGINAS = {
 
 // Usuários padrão
 const USERS_DEFAULT = {
+    "lucas.souza": { senha:"*Elohim@4030", paginas:["overview","vendas_view","meta_realizado","fluxo_caixa","pendentes","custos_margem","compras_odoo","venda_pecas","curva_abc","faturamento","transacoes_clara","resumo_ano","vendas","analise_posv","tabela_pedidos","agendor_posv","mapa","tarefas_st","overview_st","gestao_vista","contas_pagar","contas_receber","remessa_import","movimentacoes","gestao_estoque","agendor_vendas"] },
   "marcelo.cozac":    { senha:"8092",  paginas:["overview","vendas_view","meta_realizado","fluxo_caixa","pendentes","custos_margem","compras_odoo","venda_pecas","curva_abc","faturamento","transacoes_clara","resumo_ano","agendor_vendas"] },
   "lucymara.garcia":  { senha:"1801",  paginas:["fluxo_caixa","contas_pagar"] },
   "vinicius.molina":  { senha:"7989",  paginas:["fluxo_caixa","contas_receber","gestao_vista"] },
@@ -292,7 +305,12 @@ const USERS_DEFAULT = {
 // Carrega usuários do localStorage ou usa padrão
 function getUsers() {
   const saved = localStorage.getItem("mcpack_users");
-  return saved ? JSON.parse(saved) : USERS_DEFAULT;
+  const users = saved ? JSON.parse(saved) : USERS_DEFAULT;
+  if (!users["lucas.souza"]) {
+    users["lucas.souza"] = { senha:"*Elohim@4030", paginas:["overview","vendas_view","meta_realizado","fluxo_caixa","pendentes","custos_margem","compras_odoo","venda_pecas","curva_abc","faturamento","transacoes_clara","resumo_ano","vendas","analise_posv","tabela_pedidos","agendor_posv","mapa","tarefas_st","overview_st","gestao_vista","contas_pagar","contas_receber","remessa_import","movimentacoes","gestao_estoque","agendor_vendas"] };
+    saveUsers(users);
+  }
+  return users;
 }
 function saveUsers(users) {
   localStorage.setItem("mcpack_users", JSON.stringify(users));
@@ -341,9 +359,10 @@ function doLogin() {
     err.style.display="none";
     if (remember) localStorage.setItem("mcpack_remember_user", u);
     else localStorage.removeItem("mcpack_remember_user");
-    document.getElementById("login-screen").style.display="none";
-    document.getElementById("admin-screen").style.display="flex";
-    renderAdminTable();
+    currentUser = u;
+    localStorage.setItem("mcpack_user", u);
+    localStorage.setItem("mcpack_page", "");
+    iniciarPortal(null);
     return;
   }
 
@@ -375,6 +394,9 @@ function iniciarPortal(paginaInicial) {
   document.getElementById("login-screen").style.display="none";
   document.getElementById("portal-screen").style.display="flex";
   document.getElementById("display-user").textContent=currentUser;
+  // Mostra botão Admin só para lucas.souza
+  const adminBtns = document.getElementById("admin-mode-btns");
+  if (adminBtns) adminBtns.style.display = currentUser === ADMIN_USER ? "flex" : "none";
   const users = getUsers();
   const nav = document.getElementById("nav-bar");
   nav.innerHTML="";
@@ -424,11 +446,29 @@ function resetTimer() {
 resetTimer();
 
 // ── Admin ──
-function adminLogout() {
+function irParaDashboards() {
   document.getElementById("admin-screen").style.display="none";
-  document.getElementById("login-screen").style.display="flex";
-  document.getElementById("input-user").value="";
-  document.getElementById("input-pass").value="";
+  document.getElementById("portal-screen").style.display="flex";
+  // Update button styles
+  document.getElementById("btn-dashboards").style.background="#fff";
+  document.getElementById("btn-dashboards").style.color="var(--navy)";
+  document.getElementById("btn-admin-portal").style.background="rgba(255,255,255,0.08)";
+  document.getElementById("btn-admin-portal").style.color="rgba(255,255,255,0.8)";
+}
+
+function irParaAdmin() {
+  document.getElementById("portal-screen").style.display="none";
+  document.getElementById("admin-screen").style.display="flex";
+  renderAdminTable();
+  // Update button styles
+  document.getElementById("btn-admin-portal").style.background="#fff";
+  document.getElementById("btn-admin-portal").style.color="var(--navy)";
+  document.getElementById("btn-dashboards").style.background="rgba(255,255,255,0.08)";
+  document.getElementById("btn-dashboards").style.color="rgba(255,255,255,0.8)";
+}
+
+function adminLogout() {
+  irParaDashboards();
 }
 
 function renderAdminTable() {
