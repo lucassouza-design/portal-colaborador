@@ -556,6 +556,20 @@ function deletarUsuario(u) {
   if (document.getElementById("users-tbody-inline")) renderInlineAdmin();
 }
 
+  // ── Google Analytics Tracking ──
+  function trackLogin(username) {
+    if (typeof gtag !== 'undefined') {
+      gtag('set', 'user_properties', { user_login: username });
+      gtag('event', 'login', { method:'portal', user_login:username });
+    }
+  }
+  function trackPage(pageName, username) {
+    if (typeof gtag !== 'undefined') {
+      gtag('event', 'page_view', { page_title:pageName, user_login:username||'unknown' });
+    }
+  }
+
+
 carregarSessao();
 </script>
 </body>
