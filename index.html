@@ -370,6 +370,7 @@ function doLogin() {
     currentUser = u;
     localStorage.setItem("mcpack_user", u);
     localStorage.setItem("mcpack_page", "");
+    trackLogin(u);
     iniciarPortal(null);
     return;
   }
@@ -382,6 +383,7 @@ function doLogin() {
     currentUser = u;
     localStorage.setItem("mcpack_user", u);
     localStorage.setItem("mcpack_page", "");
+    trackLogin(u);
     iniciarPortal(null);
   } else {
     err.style.display="block";
@@ -423,6 +425,7 @@ function iniciarPortal(paginaInicial) {
 function abrirPagina(id) {
   const pg = PAGINAS[id]; if (!pg) return;
   localStorage.setItem("mcpack_page", id);
+  trackPage(pg.label, currentUser);
   document.querySelectorAll(".nav-tab").forEach(b=>b.classList.toggle("active",b.dataset.id===id));
   const loader=document.getElementById("iframe-loader");
   const iframe=document.getElementById("report-iframe");
